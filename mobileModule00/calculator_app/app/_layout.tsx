@@ -1,0 +1,10 @@
+import { Stack } from "expo-router";
+import Header from "./part/header";
+
+export default function RootLayout() {
+  return (
+      <Stack>
+        <Stack.Screen name="index" options={{header: () => <Header></Header>}} />
+      </Stack>
+  )
+}
