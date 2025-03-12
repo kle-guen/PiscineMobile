@@ -18,16 +18,12 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		flexDirection: "column",
-		justifyContent: "center",
-		alignItems: "center",
 		minHeight: 200,
 	},
 	textWrapper: {
-		display: "flex",
+		flex: 1,
 		flexDirection: "column",
 		alignItems: "flex-end",
-		width: "100%",
-		textOverflow: "ellipsis",
 	},
 	text: {
 		display: "flex",

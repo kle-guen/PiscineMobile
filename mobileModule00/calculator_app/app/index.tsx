@@ -8,15 +8,22 @@ export default function Index() {
 	const [result, setResult] = useState("0");
 
 
-	const scrollViewRef = useRef<ScrollView | null>(null);
+	const scrollViewRefExp = useRef<ScrollView | null>(null);
+	const scrollViewRefRes = useRef<ScrollView | null>(null);
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.textWrapper}>
-				<ScrollView horizontal={true} style={styles.scrollView} ref={scrollViewRef}
-							onContentSizeChange={() => {scrollViewRef.current?.scrollToEnd({animated: true})}}>
+				<ScrollView horizontal={true} ref={scrollViewRefExp}
+							onContentSizeChange={() => {scrollViewRefExp.current?.scrollToEnd({animated: true})}}
+							contentContainerStyle={{flexGrow: 1}}
+				>
 					<Text style={styles.text} numberOfLines={1}>{value}</Text>
 				</ScrollView>
-				<ScrollView horizontal={true} style={styles.scrollView}>
+				<ScrollView horizontal={true} ref={scrollViewRefRes}
+							onContentSizeChange={() => {scrollViewRefRes.current?.scrollToEnd({animated: true})}}
+							contentContainerStyle={{flexGrow: 1}}
+				>
 					<Text style={styles.text} numberOfLines={1}>{result}</Text>
 				</ScrollView>
 			</View>
@@ -29,8 +36,6 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		flexDirection: "column",
-		justifyContent: "center",
-		alignItems: "center",
 		minHeight: 200,
 	},
 	textWrapper: {
@@ -50,7 +55,4 @@ const styles = StyleSheet.create({
 		flexGrow: 1,
 		width: "100%",
 	},
-	scrollView: {
-		flexDirection: "row",
-	}
 });

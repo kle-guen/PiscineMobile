@@ -10,27 +10,24 @@ export default function MyKeyboard() {
 				{
 					keyboardButtons.map((button) => (
 						<View key={button} style={styles.numberButtonWrapper}>
-							<TouchableOpacity onPress={()
-								=>
-								handleInput(button)
-							}
+							<TouchableOpacity onPress={() => handleInput(button)}
 											  style={styles.numberButton}>
-								<Text>{button} < /Text>
-							< /TouchableOpacity>
-						< /View>
+								<Text>{button} </Text>
+							</TouchableOpacity>
+						</View>
 					))
 				}
 				<View style={styles.numberButtonWrapper}>
 					<View style={styles.numberButton}
 					/>
-				< /View>
-				< View
+				</View>
+				<View
 					style={styles.numberButtonWrapper}>
 					<View style={styles.numberButton}
 					/>
-				< /View>
-			< /View>
-		< /View>
+				</View>
+			</View>
+		</View>
 	)
 }
 
