@@ -1,6 +1,7 @@
 import {ScrollView, StyleSheet, Text, View} from "react-native";
-import codeToDescription from "@/app/utils/weather-data-utils";
 import palette from "@/app/theme/palette";
+import TodayWeatherList from "@/app/components/TodayWeatherList";
+import TodayWeatherGraph from "@/app/components/TodayWeatherGraph";
 
 export default function TodayScreen({location, status, errorMessage, weatherData}) {
 
@@ -26,16 +27,20 @@ export default function TodayScreen({location, status, errorMessage, weatherData
 		);
 	}
 
-
 	return (
-		<ScrollView style={styles.container}>
-			{location ? <Text style={styles.text}>{location}</Text> : <Text style={styles.text}>Your position</Text>}
-			{weather.hourly.time.map((data, index) => (
-				<Text key={index} style={styles.text}>
-					{data.split("T")[1]} {weather.hourly.temperature_2m[index]}°C {codeToDescription(weather.hourly.weather_code[index]).description} {weather.hourly.wind_speed_10m[index]} km/h
-				</Text>
-
-			))}
+		<ScrollView contentContainerStyle={{flexGrow: 1}} nestedScrollEnabled={true}>
+			<View style={styles.container}>
+				{location ?
+					<View style={styles.flexCol}>
+						<Text style={styles.cityText}>{location.split('\n')[0]}</Text>
+						<Text
+							style={styles.regionText}>{location.split('\n').length > 1 && location.split('\n')[1]}</Text>
+					</View>
+					: <Text style={styles.cityText}>Your position</Text>
+				}
+			</View>
+			<TodayWeatherGraph weatherData={weather}/>
+			<TodayWeatherList weatherData={weather}/>
 		</ScrollView>
 	);
 }
@@ -44,6 +49,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 20,
+		alignItems: "center",
 	},
 	containerCenter: {
 		flex: 1,
@@ -63,5 +69,20 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		color: palette.danger,
 		textAlign: "center",
+	},
+	cityText: {
+		fontSize: 22,
+		fontWeight: 500,
+		color: palette.primary,
+	},
+	regionText: {
+		fontSize: 22,
+		color: palette.white,
+	},
+	flexCol: {
+		flex: 0,
+		flexDirection: "column",
+		alignItems: "center",
+		justifyContent: "center",
 	},
 });

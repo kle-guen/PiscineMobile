@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {ImageBackground, Keyboard, StatusBar, StyleSheet, TextInput, View} from "react-native";
+import {ImageBackground, Keyboard, StatusBar, StyleSheet, TextInput} from "react-native";
 import {Appbar, BottomNavigation} from "react-native-paper";
 import GestureRecognizer from "react-native-swipe-gestures";
 import * as Location from "expo-location"
@@ -127,43 +127,41 @@ export default function TabLayout() {
 	return (
 		<ImageBackground source={require("../../assets/images/weather-app-bg.jpg")} style={styles.fullScreen}>
 			<StatusBar hidden={true}/>
-			<View style={styles.fullScreen}>
-				<Appbar.Header style={styles.appBar}>
-					<Appbar.Action disabled={searchText == null || searchText.length < 3} color={palette.white}
-								   icon="magnify"
-								   onPress={() => handleSelectCity(null)}/>
-					<TextInput
-						style={styles.input}
-						placeholder="Search location"
-						onChangeText={(text) => handleSearch(text)}
-						cursorColor={palette.white}
-						placeholderTextColor={palette.light}
-					/>
-					<Appbar.Action icon="crosshairs-gps" onPress={handleGeolocation}/>
-				</Appbar.Header>
-
-				<CityList cities={cityList} isKeyboardFocused={isKeyboardFocused} searchText={searchText}
-						  onPress={handleSelectCity}/>
-
-				{(!isKeyboardFocused || searchText.length < 3) && <GestureRecognizer
-					onSwipeLeft={() => setIndex((index + 1) % routes.length)}
-					onSwipeRight={() => setIndex((index + routes.length - 1) % routes.length)}
-					style={styles.flexContainer}
-				>
-					{renderScene({route: routes[index]})}
-				</GestureRecognizer>}
-
-				<BottomNavigation
-					navigationState={{index, routes}}
-					onIndexChange={setIndex}
-					renderScene={() => null}
-					barStyle={{backgroundColor: palette.transparent}}
-					style={styles.barStyle}
-					activeColor={palette.secondary}
-					inactiveColor={palette.lightGrey}
-					theme={{colors: {secondaryContainer: palette.transparent}}}
+			<Appbar.Header style={styles.appBar}>
+				<Appbar.Action disabled={searchText == null || searchText.length < 3} color={palette.white}
+							   icon="magnify"
+							   onPress={() => handleSelectCity(null)}/>
+				<TextInput
+					style={styles.input}
+					placeholder="Search location"
+					onChangeText={(text) => handleSearch(text)}
+					cursorColor={palette.white}
+					placeholderTextColor={palette.light}
 				/>
-			</View>
+				<Appbar.Action icon="crosshairs-gps" onPress={handleGeolocation}/>
+			</Appbar.Header>
+
+			<CityList cities={cityList} isKeyboardFocused={isKeyboardFocused} searchText={searchText}
+					  onPress={handleSelectCity}/>
+
+			{(!isKeyboardFocused || searchText.length < 3) && <GestureRecognizer
+				onSwipeLeft={() => setIndex((index + 1) % routes.length)}
+				onSwipeRight={() => setIndex((index + routes.length - 1) % routes.length)}
+				style={styles.flexContainer}
+			>
+				{renderScene({route: routes[index]})}
+			</GestureRecognizer>}
+
+			<BottomNavigation
+				navigationState={{index, routes}}
+				onIndexChange={setIndex}
+				renderScene={() => null}
+				barStyle={{backgroundColor: palette.transparent}}
+				style={styles.barStyle}
+				activeColor={palette.secondary}
+				inactiveColor={palette.lightGrey}
+				theme={{colors: {secondaryContainer: palette.transparent}}}
+			/>
 		</ImageBackground>
 	);
 }

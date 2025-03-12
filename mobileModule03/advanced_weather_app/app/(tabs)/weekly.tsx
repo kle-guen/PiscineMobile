@@ -1,6 +1,7 @@
-import {StyleSheet, Text, View} from 'react-native';
-import codeToDescription from "@/app/utils/weather-data-utils";
+import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import palette from "@/app/theme/palette";
+import WeeklyWeatherGraph from "@/app/components/WeeklyWeatherGraph";
+import WeeklyWeatherList from "@/app/components/WeeklyWeatherList";
 
 
 export default function WeeklyScreen({location, status, errorMessage, weatherData}) {
@@ -28,14 +29,20 @@ export default function WeeklyScreen({location, status, errorMessage, weatherDat
 
 
 	return (
-		<View style={styles.container}>
-			{location && <Text style={styles.text}>{location}</Text>}
-			{weather.daily.time.map((data, index) => (
-				<Text key={index} style={styles.text}>
-					{data} {weather.daily.temperature_2m_min[index]}°C {weather.daily.temperature_2m_max[index]}°C {codeToDescription(weather.daily.weather_code[index]).description}
-				</Text>
-			))}
-		</View>
+		<ScrollView contentContainerStyle={{flexGrow: 1}} nestedScrollEnabled={true}>
+			<View style={styles.container}>
+				{location ?
+					<View style={styles.flexCol}>
+						<Text style={styles.cityText}>{location.split('\n')[0]}</Text>
+						<Text
+							style={styles.regionText}>{location.split('\n').length > 1 && location.split('\n')[1]}</Text>
+					</View>
+					: <Text style={styles.cityText}>Your position</Text>
+				}
+			</View>
+			<WeeklyWeatherGraph weatherData={weather}/>
+			<WeeklyWeatherList weatherData={weather}/>
+		</ScrollView>
 	);
 }
 
@@ -43,16 +50,18 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		padding: 20,
+		alignItems: "center",
 	},
 	containerCenter: {
 		flex: 1,
+		padding: 20,
 		justifyContent: "center",
 		alignItems: "center",
-		padding: 20,
 	},
 	text: {
 		fontSize: 18,
 		fontWeight: "bold",
+		flex: 1,
 		textAlign: "center",
 	},
 
@@ -61,5 +70,20 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		color: palette.danger,
 		textAlign: "center",
+	},
+	cityText: {
+		fontSize: 22,
+		fontWeight: 500,
+		color: palette.primary,
+	},
+	regionText: {
+		fontSize: 22,
+		color: palette.white,
+	},
+	flexCol: {
+		flex: 0,
+		flexDirection: "column",
+		alignItems: "center",
+		justifyContent: "center",
 	},
 });
