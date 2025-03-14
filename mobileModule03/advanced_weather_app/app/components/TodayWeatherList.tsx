@@ -3,16 +3,19 @@ import codeToDescription from "@/app/utils/weather-data-utils";
 import {Icon} from "react-native-paper";
 import palette from "@/app/theme/palette";
 
-const TodayWeatherList = ({weatherData}) => {
+const TodayWeatherList = ({weatherData, setIsSwipeEnabled}) => {
 
 	return (
-		<View style={styles.container}>
+		<View onStartShouldSetResponder={(event) => {
+			setIsSwipeEnabled(false);
+			return false;
+		}} style={styles.container}>
 			<ScrollView
 				horizontal={true}
-				contentContainerStyle={{flexGrow: 1}}
 				persistentScrollbar={true}
 				showsHorizontalScrollIndicator={true}
 				nestedScrollEnabled={true}
+				onMoveShouldSetResponder={() => true}
 			>
 				{weatherData.hourly.time.map((data, index) => (
 					<View key={index} style={styles.flexCol}>
@@ -34,6 +37,7 @@ const TodayWeatherList = ({weatherData}) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 0,
+		height: 180,
 		backgroundColor: palette.secondaryLight,
 	},
 	text: {

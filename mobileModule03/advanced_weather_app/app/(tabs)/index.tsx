@@ -6,27 +6,34 @@ import {Icon} from "react-native-paper";
 export default function CurrentlyScreen({location, status, errorMessage, weatherData}) {
 	if (status === false) {
 		return (
-			<View style={styles.containerCenter}>
+			<View style={styles.containerCenter} pointerEvents="none">
 				<Text style={styles.textDanger}>{errorMessage}</Text>
+			</View>
+		);
+	}
+
+	if (weatherData === null || weatherData?.length != 2 || weatherData?.[0] === null) {
+		return (
+			<View style={styles.containerCenter} pointerEvents="none">
+				{!status && <Text style={styles.textDanger}>Could not find any result for the supplied address</Text>}
 			</View>
 		);
 	}
 
 	const weather = weatherData[1];
 
-	if (weatherData === null || weatherData.length != 2 || weather.current === null ||
-		weather.current.temperature_2m === null || weather.current.weather_code === null ||
-		weather.current.wind_speed_10m === null
+	if (weather.current === null || weather.current?.temperature_2m === null || weather.current?.weather_code === null ||
+		weather.current?.wind_speed_10m === null
 	) {
 		return (
-			<View style={styles.containerCenter}>
-				<Text style={styles.textDanger}>Could not find any result for the supplied address or coordinates</Text>
+			<View style={styles.containerCenter} pointerEvents="none">
+				<Text style={styles.textDanger}>Could not find any result for the supplied address</Text>
 			</View>
 		);
 	}
 
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} pointerEvents="none">
 			{location ?
 				<View style={styles.flexCol}>
 					<Text style={styles.cityText}>{location.split('\n')[0]}</Text>

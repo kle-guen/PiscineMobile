@@ -1,13 +1,14 @@
 import {FlatList, Keyboard, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import palette from "@/app/theme/palette";
 import {Ionicons} from "@expo/vector-icons";
+import {Icon} from "react-native-paper";
 
 export default function CityList({cities, onPress, searchText, isKeyboardFocused}) {
 
-	if (!cities || cities.length < 1 || !isKeyboardFocused) return null;
+	if (!cities || cities?.length < 1 || !isKeyboardFocused) return null;
 
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} pointerEvents="none">
 			<FlatList
 				style={styles.listWrapper}
 				keyboardShouldPersistTaps={"handled"}
@@ -19,7 +20,7 @@ export default function CityList({cities, onPress, searchText, isKeyboardFocused
 						Keyboard.dismiss();
 						onPress(item);
 					}}>
-						<Ionicons name={"location"} size={24} color={palette.light}/>
+						<Icon source={"map-marker-outline"} size={30} color={palette.light}/>
 						<Text>
 							<Text style={styles.cityName}>{item.name}</Text>
 							<Text

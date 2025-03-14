@@ -18,11 +18,12 @@ export default function TabLayout() {
 	const [errorMessage, setErrorMessage] = useState("");
 	const [location, setLocation] = useState(null);
 	const [cityList, setCityList] = useState([]);
+	const [isSwipeEnabled, setIsSwipeEnabled] = useState(true);
 	const apiService = new ApiService();
 	const [isKeyboardFocused, setKeyboardFocused] = useState(false);
 
 	const [routes] = useState([
-		{key: "currently", title: "Currently", focusedIcon: "clock-outline"},
+		{key: "currently", title: "Currently", focusedIcon: "clock"},
 		{key: "today", title: "Today", focusedIcon: "calendar-today"},
 		{key: "weekly", title: "Weekly", focusedIcon: "calendar-week"},
 	]);
@@ -50,10 +51,10 @@ export default function TabLayout() {
 				setErrorMessage("Geolocation is not available, please enable it in your App settings.");
 				return;
 			}
-			const location = await Location.getCurrentPositionAsync({});
+			const location = await Location.getLastKnownPositionAsync({});
 			const weatherData = await getWeatherData(location.coords.latitude, location.coords.longitude);
 			setWeather(weatherData);
-			setStatus(true);
+			setLocation('Your position');
 		} catch (error) {
 			setStatus(false);
 			setErrorMessage("Geolocation is not available, please enable it in your App settings.");
@@ -63,7 +64,7 @@ export default function TabLayout() {
 	const handleSearch = async (text) => {
 		try {
 			setSearchText(text);
-			if (text.length > 2) {
+			if (text.length > 1) {
 				let data = await apiService.getSearchResults(text);
 				setCityList(data.results ?? []);
 			} else {
@@ -77,15 +78,18 @@ export default function TabLayout() {
 
 	const handleSelectCity = async (city) => {
 		try {
+			if (searchText.length < 1) return;
 			if (cityList.length < 1) {
-				setStatus(false);
-				setErrorMessage("The service connexion is lost, please check your internet connexion or try again later.");
+				if (status) {
+					setStatus(false);
+					setErrorMessage("Could not find any result for the supplied address");
+				}
 				return;
 			}
 			if (city == null) {
 				city = cityList[0];
 			}
-			const text = city.admin1 ? city.name + "\n" + city.admin1 + ", " + city.country :
+			const text = city.admin1 ? city.name + "\n" + city.admin1 + "\n" + city.country :
 				city.country ? city.name + "\n" + city.country : city.name;
 			setLocation(text);
 			const weatherData = await getWeatherData(city.latitude, city.longitude);
@@ -114,10 +118,10 @@ export default function TabLayout() {
 		switch (route.key) {
 			case "today":
 				return <TodayScreen location={location} status={status} errorMessage={errorMessage}
-									weatherData={weather}/>;
+									weatherData={weather} setIsSwipeEnabled={setIsSwipeEnabled}/>;
 			case "weekly":
 				return <WeeklyScreen location={location} status={status} errorMessage={errorMessage}
-									 weatherData={weather}/>;
+									 weatherData={weather} setIsSwipeEnabled={setIsSwipeEnabled}/>;
 			default:
 				return <CurrentlyScreen location={location} status={status} errorMessage={errorMessage}
 										weatherData={weather}/>;
@@ -128,29 +132,37 @@ export default function TabLayout() {
 		<ImageBackground source={require("../../assets/images/weather-app-bg.jpg")} style={styles.fullScreen}>
 			<StatusBar hidden={true}/>
 			<Appbar.Header style={styles.appBar}>
-				<Appbar.Action disabled={searchText == null || searchText.length < 3} color={palette.white}
-							   icon="magnify"
-							   onPress={() => handleSelectCity(null)}/>
+				<Appbar.Action disabled={searchText == null || searchText.length < 1} color={"white"} icon="magnify"
+							   size={30}
+							   onPress={() => {
+								   handleSelectCity(null);
+								   Keyboard.dismiss();
+							   }}/>
 				<TextInput
 					style={styles.input}
 					placeholder="Search location"
+					onSubmitEditing={() => handleSelectCity(null)}
 					onChangeText={(text) => handleSearch(text)}
 					cursorColor={palette.white}
 					placeholderTextColor={palette.light}
 				/>
-				<Appbar.Action icon="crosshairs-gps" onPress={handleGeolocation}/>
+				<Appbar.Action icon="crosshairs-gps" onPress={handleGeolocation} color={palette.primary} size={30}/>
 			</Appbar.Header>
 
-			<CityList cities={cityList} isKeyboardFocused={isKeyboardFocused} searchText={searchText}
-					  onPress={handleSelectCity}/>
+			{searchText.length >= 1 &&
+				<CityList cities={cityList} isKeyboardFocused={isKeyboardFocused} searchText={searchText}
+						  onPress={handleSelectCity}/>}
 
-			{(!isKeyboardFocused || searchText.length < 3) && <GestureRecognizer
-				onSwipeLeft={() => setIndex((index + 1) % routes.length)}
-				onSwipeRight={() => setIndex((index + routes.length - 1) % routes.length)}
-				style={styles.flexContainer}
-			>
-				{renderScene({route: routes[index]})}
-			</GestureRecognizer>}
+			{(!isKeyboardFocused || searchText.length < 1) &&
+				<GestureRecognizer
+					onSwipeLeft={() => isSwipeEnabled && setIndex((index + 1) % routes.length)}
+					onSwipeRight={() => isSwipeEnabled && setIndex((index + routes.length - 1) % routes.length)}
+					style={styles.flexContainer}
+					onTouchEnd={() => setIsSwipeEnabled(true)}
+				>
+					{renderScene({route: routes[index]})}
+				</GestureRecognizer>
+			}
 
 			<BottomNavigation
 				navigationState={{index, routes}}
@@ -176,6 +188,9 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		height: 40,
 		color: palette.white,
+		fontSize: 18,
+		borderBottomWidth: 1,
+		borderBottomColor: palette.light,
 	},
 	fullScreen: {
 		flex: 1,

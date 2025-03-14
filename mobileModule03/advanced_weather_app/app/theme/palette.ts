@@ -1,7 +1,8 @@
 const palette = {
 	primary: '#245b70',
 	secondary: '#FF6347',
-	secondaryLight: 'rgba(202,38,2,0.4)',
+	secondaryLight: '#FF634780',
+	accent: '#FA2602FF',
 	white: '#FFFFFF',
 	light: '#ffffff80',
 	bgLight: '#00000033',

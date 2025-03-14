@@ -2,30 +2,39 @@ import {ScrollView, StyleSheet, Text, View} from "react-native";
 import palette from "@/app/theme/palette";
 import TodayWeatherList from "@/app/components/TodayWeatherList";
 import TodayWeatherGraph from "@/app/components/TodayWeatherGraph";
+import React from "react";
 
-export default function TodayScreen({location, status, errorMessage, weatherData}) {
+export default function TodayScreen({location, status, errorMessage, weatherData, setIsSwipeEnabled}) {
 
 	if (status === false) {
 		return (
-			<View style={styles.containerCenter}>
+			<View style={styles.containerCenter} pointerEvents="none">
 				<Text style={styles.textDanger}>{errorMessage}</Text>
+			</View>
+		);
+	}
+	if (weatherData === null || weatherData?.length != 2 || weatherData?.[0] === null) {
+		return (
+			<View style={styles.containerCenter} pointerEvents="none">
+				{!status && <Text style={styles.textDanger}>Could not find any result for the supplied address</Text>}
 			</View>
 		);
 	}
 
 	const weather = weatherData[0];
 
-	if (weatherData === null || weatherData.length != 2 || weather.hourly === null || weather.hourly.time.length === 0 ||
-		weather.hourly.temperature_2m === null || weather.hourly.temperature_2m.length === 0 ||
-		weather.hourly.wind_speed_10m === null || weather.hourly.wind_speed_10m.length === 0 ||
-		weather.hourly.weather_code === null || weather.hourly.weather_code.length === 0
+	if (weather.hourly === null || weather.hourly?.time?.length === 0 ||
+		weather.hourly?.temperature_2m === null || weather.hourly?.temperature_2m?.length === 0 ||
+		weather.hourly?.wind_speed_10m === null || weather.hourly?.wind_speed_10m?.length === 0 ||
+		weather.hourly?.weather_code === null || weather.hourly?.weather_code?.length === 0
 	) {
 		return (
-			<View style={styles.containerCenter}>
-				<Text style={styles.textDanger}>Could not find any result for the supplied address or coordinates</Text>
+			<View style={styles.containerCenter} pointerEvents="none">
+				<Text style={styles.textDanger}>Could not find any result for the supplied address</Text>
 			</View>
 		);
 	}
+
 
 	return (
 		<ScrollView contentContainerStyle={{flexGrow: 1}} nestedScrollEnabled={true}>
@@ -40,7 +49,7 @@ export default function TodayScreen({location, status, errorMessage, weatherData
 				}
 			</View>
 			<TodayWeatherGraph weatherData={weather}/>
-			<TodayWeatherList weatherData={weather}/>
+			<TodayWeatherList weatherData={weather} setIsSwipeEnabled={setIsSwipeEnabled}/>
 		</ScrollView>
 	);
 }

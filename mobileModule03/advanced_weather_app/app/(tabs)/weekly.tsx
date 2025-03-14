@@ -2,9 +2,10 @@ import {ScrollView, StyleSheet, Text, View} from 'react-native';
 import palette from "@/app/theme/palette";
 import WeeklyWeatherGraph from "@/app/components/WeeklyWeatherGraph";
 import WeeklyWeatherList from "@/app/components/WeeklyWeatherList";
+import React from "react";
 
 
-export default function WeeklyScreen({location, status, errorMessage, weatherData}) {
+export default function WeeklyScreen({location, status, errorMessage, weatherData, setIsSwipeEnabled}) {
 
 	if (status === false) {
 		return (
@@ -14,19 +15,26 @@ export default function WeeklyScreen({location, status, errorMessage, weatherDat
 		);
 	}
 
-	const weather = weatherData[1];
-
-	if (weatherData === null || weatherData.length != 2 || weather.daily === null || weather.daily.time.length === 0 ||
-		weather.daily.temperature_2m_min === null || weather.daily.temperature_2m_min.length === 0 ||
-		weather.daily.temperature_2m_max === null || weather.daily.temperature_2m_max.length === 0 ||
-		weather.daily.weather_code === null || weather.daily.weather_code.length === 0) {
+	if (weatherData === null || weatherData?.length != 2 || weatherData?.[0] === null) {
 		return (
-			<View style={styles.containerCenter}>
-				<Text style={styles.textDanger}>Could not find any result for the supplied address or coordinates</Text>
+			<View style={styles.containerCenter} pointerEvents="none">
+				{!status && <Text style={styles.textDanger}>Could not find any result for the supplied address</Text>}
 			</View>
 		);
 	}
 
+	const weather = weatherData[1];
+
+	if (weather.daily === null || weather.daily?.time?.length === 0 ||
+		weather.daily?.temperature_2m_min === null || weather.daily?.temperature_2m_min?.length === 0 ||
+		weather.daily?.temperature_2m_max === null || weather.daily?.temperature_2m_max?.length === 0 ||
+		weather.daily?.weather_code === null || weather.daily?.weather_code.length === 0) {
+		return (
+			<View style={styles.containerCenter} pointerEvents="none">
+				<Text style={styles.textDanger}>Could not find any result for the supplied address</Text>
+			</View>
+		);
+	}
 
 	return (
 		<ScrollView contentContainerStyle={{flexGrow: 1}} nestedScrollEnabled={true}>
@@ -41,7 +49,7 @@ export default function WeeklyScreen({location, status, errorMessage, weatherDat
 				}
 			</View>
 			<WeeklyWeatherGraph weatherData={weather}/>
-			<WeeklyWeatherList weatherData={weather}/>
+			<WeeklyWeatherList weatherData={weather} setIsSwipeEnabled={setIsSwipeEnabled}/>
 		</ScrollView>
 	);
 }

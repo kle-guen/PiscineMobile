@@ -1,6 +1,7 @@
 import {LineChart} from "react-native-chart-kit";
 import {Dimensions, StyleSheet, Text, View} from "react-native";
 import palette from "@/app/theme/palette";
+import {Icon} from "react-native-paper";
 
 const WeeklyWeatherGraph = ({weatherData}) => {
 
@@ -10,32 +11,41 @@ const WeeklyWeatherGraph = ({weatherData}) => {
 	const yDataMin = weatherData.daily.temperature_2m_min;
 	const yDataMax = weatherData.daily.temperature_2m_max;
 
-
 	const data = {
 		labels: xData,
 		datasets: [
 			{
 				data: yDataMin,
-				color: (opacity = 3) => `rgba(0, 0, 0, ${opacity})`, // Line color
+				color: () => palette.primary,
 				strokeWidth: 2,
+				propsForDots: {
+					r: "3",
+					strokeWidth: "2",
+					stroke: palette.primary,
+				}
 			},
 			{
 				data: yDataMax,
-				color: (opacity = 3) => `rgba(202, 38, 2, ${opacity})`, // Line color
+				color: () => palette.accent,
 				strokeWidth: 2,
+				propsForDots: {
+					r: "3",
+					strokeWidth: "2",
+					stroke: palette.accent,
+				}
 			}
-		]
+		],
 	};
 
 	return (
-		<View style={styles.container}>
+		<View style={styles.container} pointerEvents="none">
 			<Text style={styles.title}>Weekly Temperatures</Text>
 			<LineChart
 				data={data}
 				fromZero
-				width={width - 20} // Chart width
-				height={300} // Chart height
-				yAxisSuffix={"°C"} // Add temperature symbol to the Y-axis
+				width={width - 20}
+				height={300}
+				yAxisSuffix={"°C"}
 				chartConfig={{
 					backgroundColor: palette.transparent,
 					backgroundGradientFrom: palette.transparent,
@@ -43,28 +53,19 @@ const WeeklyWeatherGraph = ({weatherData}) => {
 					backgroundGradientFromOpacity: 0,
 					backgroundGradientToOpacity: 0,
 					decimalPlaces: 0,
-					color: (opacity = 3) => `rgba(202, 38, 2, ${opacity})`, // Line color
+					color: () => palette.secondary,
 					propsForBackgroundLines: {
 						strokeWidth: 1,
 						stroke: palette.white,
 						strokeDasharray: "0",
 					},
-					style: {
-						paddingLeft: 0,
-						flex: 1,
-					},
-					propsForDots: {
-						r: "4", // Dot radius
-						strokeWidth: "2",
-						stroke: palette.secondary, // Dot border color
-					},
-					propsForHorizontalLabels: {
-						disabled: true,
-					},
-					propsForVerticalLabels: {}
 				}}
-				bezier // Smooth curve for the line
+				bezier
 			/>
+			<Text style={styles.legend}>
+				<Text><Icon size={10} source={'circle'} color={palette.primary}/> Min temperature</Text>
+				<Text> <Icon size={10} source={'circle'} color={palette.accent}/> Max temperature</Text>
+			</Text>
 		</View>
 	);
 };
@@ -73,12 +74,19 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		justifyContent: 'flex-start',
-		alignItems: 'center',
 	},
 	title: {
 		fontSize: 20,
 		color: palette.white,
 		marginBottom: 20,
+		textAlign: 'center',
+	},
+	legend: {
+		fontSize: 12,
+		color: palette.white,
+		textAlign: 'center',
+		paddingTop: 2,
+		gap: 10,
 	}
 });
 

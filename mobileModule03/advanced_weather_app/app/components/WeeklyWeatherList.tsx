@@ -3,24 +3,28 @@ import codeToDescription from "@/app/utils/weather-data-utils";
 import {Icon} from "react-native-paper";
 import palette from "@/app/theme/palette";
 
-const WeeklyWeatherList = ({weatherData}) => {
-
+const WeeklyWeatherList = ({weatherData, setIsSwipeEnabled}) => {
 	return (
-		<View style={styles.container}>
+		<View onStartShouldSetResponder={(event) => {
+			setIsSwipeEnabled(false);
+			return false;
+		}} style={styles.container}>
 			<ScrollView
 				horizontal={true}
-				contentContainerStyle={{flexGrow: 1}}
 				persistentScrollbar={true}
 				showsHorizontalScrollIndicator={true}
 				nestedScrollEnabled={true}
+				onMoveShouldSetResponder={() => true}
 			>
 				{weatherData.daily.time.map((data, index) => (
 					<View key={index} style={styles.flexCol}>
 						<Text style={styles.text}>{data.split('-')[2]}/{data.split('-')[1]}</Text>
 						<Icon source={codeToDescription(weatherData.daily.weather_code[index]).icon} size={30}
 							  color={palette.primary}/>
-						<Text style={styles.temperatureTextMax}>{weatherData.daily.temperature_2m_max[index]}°C max</Text>
-						<Text style={styles.temperatureTextMin}>{weatherData.daily.temperature_2m_min[index]}°C min</Text>
+						<Text style={styles.temperatureTextMax}>{weatherData.daily.temperature_2m_max[index]}°C
+							max</Text>
+						<Text style={styles.temperatureTextMin}>{weatherData.daily.temperature_2m_min[index]}°C
+							min</Text>
 					</View>
 				))}
 			</ScrollView>
@@ -32,6 +36,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 0,
 		backgroundColor: palette.secondaryLight,
+		height: 180,
 	},
 	text: {
 		fontSize: 18,
@@ -53,7 +58,7 @@ const styles = StyleSheet.create({
 	},
 	temperatureTextMax: {
 		fontSize: 20,
-		color: palette.danger,
+		color: palette.accent,
 	},
 	temperatureTextMin: {
 		fontSize: 20,
